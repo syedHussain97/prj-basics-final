@@ -35,4 +35,5 @@ import { ShoppingListService } from './shopping-list/shopping-list.service';
   bootstrap: [AppComponent]
 })
 export class AppModule {
+  // this is a test
 }
