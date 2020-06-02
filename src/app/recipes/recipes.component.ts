@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Recipe } from './recipe.model';
-import { RecipeService } from './recipe.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {RecipeService} from './recipe.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-recipes',
@@ -8,19 +8,24 @@ import { RecipeService } from './recipe.service';
   styleUrls: ['./recipes.component.css'],
   providers: [RecipeService]
 })
-export class RecipesComponent implements OnInit {
+export class RecipesComponent implements OnInit, OnDestroy {
+  // removing recipe service as it is no longer needed, router link does the work for us
+  // selectedRecipe: Recipe;
+  private recipeSelectedSubscription: Subscription;
 
-  selectedRecipe: Recipe;
-
-  constructor(private recipeService: RecipeService) {
-  }
+  // constructor(private recipeService: RecipeService) {
+  // }
 
   ngOnInit() {
-    this.recipeService.recipeSelected.subscribe(
-      (recipe: Recipe) => {
-        this.selectedRecipe = recipe;
-      }
-    );
+    // this.recipeSelectedSubscription = this.recipeService.recipeSelected.subscribe(
+    //   (recipe: Recipe) => {
+    //     this.selectedRecipe = recipe;
+    //   }
+    // );
+  }
+
+  ngOnDestroy() {
+    // this.recipeSelectedSubscription.unsubscribe();
   }
 
 }
