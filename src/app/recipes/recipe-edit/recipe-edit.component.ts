@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {FormArray, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {RecipeService} from '../recipe.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class RecipeEditComponent implements OnInit {
     let recipeName = '';
     let recipeImagePath = '';
     let recipeDescription = '';
-    let recipeIngredient = new FormArray([]);
+    const recipeIngredient = new FormArray([]);
 
     if (this.editMode) {
       const recipe = this.recipeService.getRecipeById(this.id);
@@ -41,17 +41,17 @@ export class RecipeEditComponent implements OnInit {
       if (recipe['ingredients']) {
         for (const ingredient of recipe.ingredients) {
           recipeIngredient.push(new FormGroup({
-            'name': new FormControl(ingredient.name),
-            'amount': new FormControl(ingredient.amount)
+            'name': new FormControl(ingredient.name, Validators.required),
+            'amount': new FormControl(ingredient.amount, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
           }));
         }
       }
 
     }
     this.recipeForm = new FormGroup({
-      'name': new FormControl(recipeName),
-      'imagePath': new FormControl(recipeImagePath),
-      'description': new FormControl(recipeDescription),
+      'name': new FormControl(recipeName, Validators.required),
+      'imagePath': new FormControl(recipeImagePath, Validators.required),
+      'description': new FormControl(recipeDescription, Validators.required),
       'ingredients': recipeIngredient
     });
 
@@ -63,6 +63,14 @@ export class RecipeEditComponent implements OnInit {
 
   onSubmit() {
     console.log(this.recipeForm);
+  }
+
+  onAddIngredient() {
+    (<FormArray>this.recipeForm.get('ingredients')).push(
+      new FormGroup({
+        'name': new FormControl(null, Validators.required),
+        'amount': new FormControl(null, [Validators.required, Validators.pattern(/^[1-9]+[0-9]*$/)])
+      }));
   }
 }
 
