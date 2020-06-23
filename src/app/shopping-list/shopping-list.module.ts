@@ -10,7 +10,7 @@ import {SharedModule} from '../shared/shared.module';
 @NgModule({
   declarations: [ShoppingListComponent,
     ShoppingEditComponent],
-  imports: [AppRoutingModule, ShoppingListRoutingModule, SharedModule, FormsModule]
+  imports: [ShoppingListRoutingModule, SharedModule, FormsModule]
 })
 export class ShoppingListModule {
 
