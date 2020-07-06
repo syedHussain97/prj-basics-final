@@ -13,5 +13,4 @@ import {SharedModule} from '../shared/shared.module';
   imports: [ShoppingListRoutingModule, SharedModule, FormsModule]
 })
 export class ShoppingListModule {
-
 }
