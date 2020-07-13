@@ -46,7 +46,7 @@ export function shoppingListReducer(state: State = initialState,
       const ingredient = state.ingredients[action.payload.index];
       const updatedIngredient = {...ingredient, ...action.payload.newIngredient};
       const updatedIngredients = [...state.ingredients];
-      updatedIngredient[action.payload.index] = updatedIngredient;
+      updatedIngredients[action.payload.index] = updatedIngredient;
       return {
         ...state,
         ingredients: updatedIngredients
