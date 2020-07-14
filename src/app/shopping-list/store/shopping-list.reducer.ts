@@ -16,12 +16,7 @@ export interface State {
   editedIngredientIndex: number;
 }
 
-export interface AppState {
-  shoppingList: State;
-}
-
-export function shoppingListReducer(state: State = initialState,
-                                    action: ShoppingListActions.ShoppingListActions) {
+export function shoppingListReducer(state: State = initialState, action: ShoppingListActions.ShoppingListActions) {
 
   switch (action.type) {
     case ShoppingListActions.ADD_INGREDIENT:
@@ -41,8 +36,8 @@ export function shoppingListReducer(state: State = initialState,
         ingredients: state.ingredients.filter((ig, igIndex) => {
           return igIndex !== state.editedIngredientIndex;
         }),
-        editedIngredientIndex: -1,
-        editedIngredient: null
+        editedIngredient: null,
+        editedIngredientIndex: -1
       };
     case ShoppingListActions.UPDATE_INGREDIENT:
       const ingredient = state.ingredients[state.editedIngredientIndex];
@@ -52,20 +47,20 @@ export function shoppingListReducer(state: State = initialState,
       return {
         ...state,
         ingredients: updatedIngredients,
-        editedIngredientIndex: -1,
-        editedIngredient: null
+        editedIngredient: null,
+        editedIngredientIndex: -1
       };
     case ShoppingListActions.START_EDIT:
       return {
         ...state,
-        editedIngredientIndex: action.payload,
-        editedIngredient: {...state.ingredients[action.payload]}
+        editedIngredient: {...state.ingredients[action.payload]},
+        editedIngredientIndex: action.payload
       };
     case ShoppingListActions.STOP_EDIT:
       return {
         ...state,
-        editedIngredientIndex: null,
-        editedIngredient: -1
+        editedIngredient: null,
+        editedIngredientIndex: -1
       };
     default:
       return state;
