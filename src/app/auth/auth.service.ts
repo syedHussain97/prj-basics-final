@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
-import {BehaviorSubject, throwError} from 'rxjs';
+import {throwError} from 'rxjs';
 import {User} from './user.model';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
@@ -48,10 +48,12 @@ export class AuthService {
         email: email,
         password: password,
         returnSecureToken: true
-      }).pipe(catchError(this.handleError), tap(responseData => {
-      this.handleAuthentication(responseData.email, responseData.localId, responseData.idToken,
-        +responseData.expiresIn);
-    }));
+      }).pipe(
+      catchError(this.handleError),
+      tap(responseData => {
+        this.handleAuthentication(responseData.email, responseData.localId, responseData.idToken,
+          +responseData.expiresIn);
+      }));
   }
 
   autoLogin() {

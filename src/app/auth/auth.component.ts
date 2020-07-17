@@ -3,6 +3,9 @@ import {NgForm} from '@angular/forms';
 import {AuthResponseData, AuthService} from './auth.service';
 import {Observable} from 'rxjs';
 import {Router} from '@angular/router';
+import {Store} from '@ngrx/store';
+import * as fromApp from '../store/app.reducer';
+import * as AuthActions from '../auth/store/auth.actions';
 
 @Component({
   selector: 'app-auth',
@@ -13,10 +16,16 @@ export class AuthComponent implements OnInit {
   isLoading = false;
   error: string = null;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService,
+              private router: Router,
+              private store: Store<fromApp.AppState>) {
   }
 
   ngOnInit() {
+    this.store.select('auth').subscribe(authState => {
+      this.isLoading = authState.loading;
+      this.error = authState.authError;
+    });
   }
 
   onSwitchMode() {
@@ -36,22 +45,33 @@ export class AuthComponent implements OnInit {
 
     let authObs: Observable<AuthResponseData>;
 
+
     if (this.isLoginMode) {
-      authObs = this.authService.login(email, password);
+      this.store.dispatch(new AuthActions.LoginStart({
+          email: email,
+          password: password
+        }
+      ));
+      // authObs = this.authService.login(email, password);
 
     } else {
-      authObs = this.authService.signUp(email, password);
+      // authObs = this.authService.signUp(email, password);
     }
 
-    authObs.subscribe(responseData => {
-      console.log(responseData);
-      this.isLoading = false;
-      this.router.navigate(['recipes']);
-    }, errorMessage => {
-      console.log(errorMessage);
-      this.error = errorMessage;
-      this.isLoading = false;
+    this.store.select('auth').subscribe(authState => {
+
     });
+
+
+    // authObs.subscribe(responseData => {
+    //   console.log(responseData);
+    //   this.isLoading = false;
+    //   this.router.navigate(['recipes']);
+    // }, errorMessage => {
+    //   console.log(errorMessage);
+    //   this.error = errorMessage;
+    //   this.isLoading = false;
+    // });
 
     form.reset();
   }
