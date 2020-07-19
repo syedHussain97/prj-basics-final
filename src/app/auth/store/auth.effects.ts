@@ -1,9 +1,10 @@
 import {Actions, Effect, ofType} from '@ngrx/effects';
 import * as AuthActions from './auth.actions';
-import {catchError, map, switchMap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {of} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
 
 export interface AuthResponseData {
   kind: string;
@@ -45,7 +46,13 @@ export class AuthEffects {
     })
   );
 
+  @Effect({dispatch: false})
+  authSuccess = this.actions$.pipe(
+    ofType(AuthActions.LOGIN),
+    tap(() => this.router.navigate(['/'])));
+
   constructor(private actions$: Actions,
-              private http: HttpClient) {
+              private http: HttpClient,
+              private router: Router) {
   }
 }
