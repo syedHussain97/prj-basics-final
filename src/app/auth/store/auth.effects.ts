@@ -20,6 +20,12 @@ export interface AuthResponseData {
 export class AuthEffects {
 
   @Effect()
+  authSignup = this.actions$.pipe(
+    ofType(AuthActions.SIGNUP_START),
+    switchMap((signupActions: AuthActions.SignupStart))
+  );
+
+  @Effect()
   authLogin = this.actions$.pipe(
     ofType(AuthActions.LOGIN_START),
     switchMap((authData: AuthActions.LoginStart) => {
@@ -31,16 +37,34 @@ export class AuthEffects {
         }).pipe(
         map(responseData => {
             const expirationDate = new Date(new Date().getTime() + +responseData.expiresIn * 1000);
-            return of(new AuthActions.Login({
+            return new AuthActions.AuthenticateSuccess({
               email: responseData.email,
               userId: responseData.localId,
               token: responseData.idToken,
               expirationDate: expirationDate
-            }));
+            });
           }
         ),
-        catchError(error => {
-          return of();
+        catchError(errorResponse => {
+
+          let errorMessage = 'an error has occurred';
+          if (!errorResponse.error || !errorResponse.error.error) {
+            return of(new AuthActions.AuthenticateFailure(errorMessage));
+          } else {
+
+            switch (errorResponse.error.error.message) {
+              case 'EMAIL_EXISTS':
+                errorMessage = 'This email already exists';
+                break;
+              case 'EMAIL_NOT_FOUND':
+                errorMessage = 'This email doesn not exist';
+                break;
+              case 'INVALID_PASSWORD':
+                errorMessage = 'password is invalid';
+                break;
+            }
+          }
+          return of(new AuthActions.AuthenticateFailure(errorMessage));
         }),
       );
     })
@@ -48,8 +72,9 @@ export class AuthEffects {
 
   @Effect({dispatch: false})
   authSuccess = this.actions$.pipe(
-    ofType(AuthActions.LOGIN),
+    ofType(AuthActions.AUTHENTICATE_SUCCESS),
     tap(() => this.router.navigate(['/'])));
+
 
   constructor(private actions$: Actions,
               private http: HttpClient,
