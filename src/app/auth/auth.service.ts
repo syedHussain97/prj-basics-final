@@ -9,6 +9,7 @@ import * as fromApp from '../store/app.reducer';
 import * as AuthActions from '../auth/store/auth.actions';
 
 
+/*
 export interface AuthResponseData {
   kind: string;
   idToken: string;
@@ -18,6 +19,7 @@ export interface AuthResponseData {
   localId: string;
   registered?: boolean;
 }
+*/
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
