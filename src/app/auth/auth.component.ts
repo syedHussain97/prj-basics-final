@@ -1,20 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
-import {AuthResponseData, AuthService} from './auth.service';
-import {Observable} from 'rxjs';
+import {AuthService} from './auth.service';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 import * as fromApp from '../store/app.reducer';
 import * as AuthActions from '../auth/store/auth.actions';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html'
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode = true;
   isLoading = false;
   error: string = null;
+  private storeSub: Subscription;
 
   constructor(private authService: AuthService,
               private router: Router,
@@ -22,7 +23,7 @@ export class AuthComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.select('auth').subscribe(authState => {
+    this.storeSub = this.store.select('auth').subscribe(authState => {
       this.isLoading = authState.loading;
       this.error = authState.authError;
 
@@ -44,7 +45,7 @@ export class AuthComponent implements OnInit {
 
     this.isLoading = true;
 
-    let authObs: Observable<AuthResponseData>;
+    // let authObs: Observable<AuthResponseData>;
 
 
     if (this.isLoginMode) {
@@ -57,6 +58,10 @@ export class AuthComponent implements OnInit {
 
     } else {
       // authObs = this.authService.signUp(email, password);
+      this.store.dispatch(new AuthActions.SignupStart({
+        email: email,
+        password: password
+      }));
     }
 
     this.store.select('auth').subscribe(authState => {
@@ -75,5 +80,16 @@ export class AuthComponent implements OnInit {
     // });
 
     form.reset();
+  }
+
+  onHandleError() {
+    this.store.dispatch(new AuthActions.ClearError());
+  }
+
+  ngOnDestroy() {
+    if (this.storeSub) {
+
+      this.storeSub.unsubscribe();
+    }
   }
 }
