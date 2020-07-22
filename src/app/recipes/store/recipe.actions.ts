@@ -16,7 +16,6 @@ export class AddRecipeAction implements Action {
   }
 }
 
-
 export class UpdateRecipe implements Action {
   readonly type = UPDATE_RECIPE;
 

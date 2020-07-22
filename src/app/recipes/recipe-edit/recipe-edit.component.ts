@@ -6,6 +6,7 @@ import {Subscription} from 'rxjs';
 import * as fromApp from '../../store/app.reducer';
 import {Store} from '@ngrx/store';
 import {map} from 'rxjs/operators';
+import * as RecipeActions from '../store/recipe.actions';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -17,6 +18,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
   editMode = false;
   recipeForm: FormGroup;
   formSubscription: Subscription;
+  private storeSub: Subscription;
 
   constructor(private route: ActivatedRoute,
               private recipeService: RecipeService,
@@ -45,7 +47,7 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
     if (this.editMode) {
 
-      this.store.select('recipes').pipe(
+      this.storeSub = this.store.select('recipes').pipe(
         map(recipeState => recipeState.recipes.find((recipe, index) =>
           index === this.id))).subscribe(recipe => {
 
@@ -84,9 +86,14 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
     //   this.recipeForm.value['imagePath'],
     //   this.recipeForm.value['ingredients']);
     if (this.editMode) {
-      this.recipeService.updateRecipe(this.id, this.recipeForm.value);
+      // this.recipeService.updateRecipe(this.id, this.recipeForm.value);
+      this.store.dispatch(new RecipeActions.UpdateRecipe({
+        index: this.id,
+        newRecipe: this.recipeForm.value
+      }));
     } else {
-      this.recipeService.addRecipe(this.recipeForm.value);
+      // this.recipeService.addRecipe(this.recipeForm.value);
+      this.store.dispatch(new RecipeActions.AddRecipeAction(this.recipeForm.value));
     }
     this.onCancel();
   }
@@ -102,6 +109,9 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.formSubscription.unsubscribe();
+    if (this.storeSub) {
+      this.storeSub.unsubscribe();
+    }
   }
 
   onDeleteIngredient(indexToRemove: number) {

@@ -15,13 +15,23 @@ export function recipeReducer(state = initialState, action: RecipeActions.Recipe
     case RecipeActions.ADD_RECIPE:
       return {
         ...state,
+        recipes: [...state.recipes, action.payload]
       };
     case RecipeActions.UPDATE_RECIPE:
+      const updateRecipe = {...state.recipes[action.payload.index], ...action.payload.newRecipe};
+      const updateRecipes = [...state.recipes];
+      updateRecipes[action.payload.index] = updateRecipe;
       return {
-        ...state
+        ...state,
+        recipes: updateRecipe
       };
     case RecipeActions.DELETE_RECIPE:
-      return {...state};
+      return {
+        ...state,
+        recipes: state.recipes.filter((recipe, index) => {
+          return index !== action.payload;
+        })
+      };
     case RecipeActions.SET_RECIPES:
       return {
         ...state,
