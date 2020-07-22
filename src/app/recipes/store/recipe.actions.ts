@@ -6,6 +6,7 @@ export const ADD_RECIPE = '[Recipe] Add Recipe';
 export const UPDATE_RECIPE = '[Recipe] Update Recipe';
 export const DELETE_RECIPE = '[Recipe] Delete Recipe';
 export const SET_RECIPES = '[Recipe] Set Recipes';
+export const FETCH_RECIPES = '[Recipe] Fetch Recipes';
 
 
 export class AddRecipeAction implements Action {
@@ -38,9 +39,14 @@ export class SetRecipes implements Action {
   }
 }
 
+export class FetchRecipes implements Action {
+  readonly type = FETCH_RECIPES;
+}
+
 
 export type RecipeActions =
   | AddRecipeAction
   | UpdateRecipe
   | DeleteRecipe
-  | SetRecipes;
+  | SetRecipes
+  | FetchRecipes;
